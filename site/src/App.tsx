@@ -145,6 +145,7 @@ export default function App() {
     setAiLoading(true);
     setAiError("");
     setPlaying(false);
+    
     try {
       const response = await fetch("/api/label", {
         method: "POST",
