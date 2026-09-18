@@ -46,6 +46,58 @@ function frameFile(frame: number) {
   return `frame_${String(frame).padStart(6, "0")}.jpg`;
 }
 
+function AnimatedArchitecture() {
+  return (
+    <div className="animated-architecture">
+      <div className="arch-nodes">
+        <div className="arch-node">
+          <div className="arch-icon"><Film size={20} /></div>
+          <span>Video Source</span>
+          <div className="ripple"></div>
+        </div>
+        <div className="arch-connector">
+          <div className="particle agent-1"></div>
+          <div className="particle agent-2"></div>
+        </div>
+        <div className="arch-node">
+          <div className="arch-icon"><ScanSearch size={20} /></div>
+          <span>AI Labeling</span>
+          <div className="ripple"></div>
+        </div>
+        <div className="arch-connector">
+          <div className="particle agent-3"></div>
+        </div>
+        <div className="arch-node">
+          <div className="arch-icon"><Layers3 size={20} /></div>
+          <span>Augmentation</span>
+          <div className="ripple"></div>
+        </div>
+        <div className="arch-connector">
+          <div className="particle agent-1"></div>
+          <div className="particle agent-4"></div>
+        </div>
+        <div className="arch-node">
+          <div className="arch-icon"><Box size={20} /></div>
+          <span>YOLOv8 Training</span>
+          <div className="ripple"></div>
+        </div>
+        <div className="arch-connector">
+          <div className="particle agent-2"></div>
+        </div>
+        <div className="arch-node">
+          <div className="arch-icon"><BarChart3 size={20} /></div>
+          <span>Evaluation</span>
+          <div className="ripple"></div>
+        </div>
+      </div>
+      <div className="arch-caption">
+        <Sparkles size={14} className="sparkle-icon" /> 
+        Multi-agent pipeline processing in real-time
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [frameIndex, setFrameIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -157,6 +209,10 @@ export default function App() {
               </button>
             );
           })}
+        </section>
+
+        <section className="architecture-section">
+          <AnimatedArchitecture />
         </section>
 
         <section className="workbench" id="dataset" aria-label="Verified dataset explorer">
