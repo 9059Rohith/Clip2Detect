@@ -2,7 +2,7 @@
 
 **Clip2Detect turns gameplay video into labeled training data, trains a YOLO object detector, and lets you inspect real results in a browser.**
 
-[Live application](https://clip2detect.vercel.app/) · [Source repository](https://github.com/9059Rohith/Clip2Detect) · [Narrated demo](docs/demo/clip2detect-demo.mp4) · [Poster](docs/poster/clip2detect-poster.png)
+[Live application](https://clip2detect.vercel.app/) · [Source repository](https://github.com/9059Rohith/Clip2Detect) · [Poster](docs/poster/clip2detect-poster.png)
 
 ![Clip2Detect poster](docs/poster/clip2detect-poster.png)
 
@@ -64,7 +64,7 @@ For the second command, set `OPENAI_API_KEY` in your shell or a local untracked 
 | Deliverable | Link |
 | --- | --- |
 | Live viewer | [clip2detect.vercel.app](https://clip2detect.vercel.app/) |
-| Narrated, subtitled video | [Watch or download](docs/demo/clip2detect-demo.mp4) · [SRT](docs/demo/clip2detect-demo.srt) |
+| Narrated, subtitled video | Recording pending live AI configuration; [recording script](docs/demo/make_demo.py) |
 | Poster | [Full resolution PNG](docs/poster/clip2detect-poster.png) |
 | Screenshots | [Desktop](docs/screenshots/desktop-overview.png) · [Evaluation](docs/screenshots/evaluation.png) · [Mobile](docs/screenshots/mobile-overview.png) |
 | Model and data | [Weights](https://clip2detect.vercel.app/sample/best.pt) · [Evaluation JSON](https://clip2detect.vercel.app/sample/eval_results.json) |

@@ -22,11 +22,11 @@ TEMP.mkdir(exist_ok=True)
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 
 SEGMENTS = [
-    ("Clip2Detect turns source video into an object detector. This is a real, reproducible run, with actual frames, annotations, trained weights, and measured results.", "intro"),
+    ("Clip2Detect turns video into an object detector. This real run includes source frames, exact labels, trained weights, and measured results.", "intro"),
     ("The pipeline has five stages: collect, label, augment, train, and evaluate. Each stage is available in the Python project and explained in this live artifact viewer.", "collect"),
     ("For this submission, we made an original eight second Fruit Catch gameplay clip. The collector sampled it at four frames per second, producing thirty two source frames.", "frames"),
     ("The frame browser lets us inspect each sampled image. Here is frame twelve, with fruit and bomb positions visibly different from the previous frame.", "frame"),
-    ("Ground truth boxes are derived from the fixture's exact drawing geometry. They are encoded in YOLO format. This fixture does not claim artificial intelligence generated these labels.", "label"),
+    ("Ground truth boxes come from the fixture's drawing coordinates and are encoded in YOLO format. These are verified, exact labels.", "label"),
     ("We can hide and restore those boxes to compare labels with the source pixels. The inspector reports two fruit and one bomb in this frame.", "toggle"),
     ("Here is a separate live OpenAI vision request. GPT five point six Luna analyzes the selected frame through a server side API, and its dashed boxes can be compared with the exact ground truth.", "ai_label"),
     ("The augmentation stage creates flipped, brighter, contrast adjusted, and noise varied images. It transforms each corresponding annotation along with the image, producing one hundred twenty eight variations.", "augment"),
@@ -36,9 +36,9 @@ SEGMENTS = [
     ("Recall is ninety three point five percent on this small held out fixture. These are measured results from the trained model, but this controlled example is not a production accuracy benchmark.", "metrics2"),
     ("The export panel provides the real input video, ground truth JSON, evaluation JSON, and trained PyTorch weights. Each file downloads from the running site.", "export"),
     ("The summary ties the output back to the workflow: thirty two frames, ninety six exact boxes, one hundred twenty eight augmented images, and the trained detector.", "summary"),
-    ("Codex helped build this reproducible fixture, the React viewer, Vercel API function, tests, and recording. Python, OpenCV, NumPy, PyTorch, and Ultralytics YOLO power the data and training pipeline.", "technology"),
+    ("Codex assisted with the fixture, React viewer, Vercel API, tests, and recording. OpenCV, NumPy, PyTorch, and Ultralytics YOLO power the training pipeline.", "technology"),
     ("To reproduce this complete example locally, synchronize dependencies with uv, then run the included Fruit Catch script. It generates footage, labels, model weights, and evaluation from scratch.", "reproduce"),
-    ("This demo shows the working application and its actual outputs. Explore the live site, inspect the source code and files, and use your own video and classes for a new project.", "ending"),
+    ("This demo shows the working site and its actual outputs. Explore the code and run the pipeline on your own video.", "ending"),
 ]
 
 
