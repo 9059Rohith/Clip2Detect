@@ -1,0 +1,30 @@
+[project]
+name = "clip2detect"
+version = "1.0.0"
+description = "Train YOLO object detectors from labeled gameplay video"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.24.0",
+  "opencv-python>=4.8",
+  "Pillow>=10.0.0",
+  "PyYAML>=6.0",
+  "ultralytics>=8.0.0",
+]
+
+[project.optional-dependencies]
+demo = [
+  "edge-tts>=7.0",
+  "imageio-ffmpeg>=0.6",
+  "mutagen>=1.47",
+  "playwright>=1.55",
+]
+
+[project.scripts]
+clip2detect = "clip2detect.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["clip2detect"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

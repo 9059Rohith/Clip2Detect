@@ -1,0 +1,18 @@
+{
+  "map50": 0.9904,
+  "map50_95": 0.8786,
+  "precision": 0.9147,
+  "recall": 0.9345,
+  "target_accuracy": 0.5,
+  "meets_target": true,
+  "per_class": [
+    {
+      "class": "fruit",
+      "ap50": 0.9947
+    },
+    {
+      "class": "bomb",
+      "ap50": 0.986
+    }
+  ]
+}
