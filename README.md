@@ -1,89 +1,572 @@
-# Clip2Detect
+<div align="center">
 
-**Clip2Detect turns gameplay video into labeled training data, trains a YOLO object detector, and lets you inspect real results in a browser.**
+![Clip2Detect Poster](docs/poster/clip2detect-poster.png)
 
-[Live application](https://clip2detect.vercel.app/) · [Source repository](https://github.com/9059Rohith/Clip2Detect) · [Poster](docs/poster/clip2detect-poster.png)
+<br/>
 
-![Clip2Detect poster](docs/poster/clip2detect-poster.png)
+# 🎮 Clip2Detect
 
-## What works
+### **Turn Gameplay Video into a Trained YOLO Object Detector — End-to-End, in Minutes**
 
-1. Sample frames from a local video with OpenCV.
-2. Label the frames from a JSON annotation manifest or GPT-5.6 Luna vision through the OpenAI Responses API.
-3. Create horizontal flip, brightness, contrast, and noise variants, transforming the boxes when needed.
-4. Keep each source frame and its variants in the same train or validation partition.
-5. Train Ultralytics YOLOv8n and evaluate the saved best weights.
-6. Explore the frames, labels, live AI comparison, metrics, and downloads in a React viewer.
+<p align="center">
+  <a href="https://clip2detect.vercel.app/"><img src="https://img.shields.io/badge/🌐 Live%20App-clip2detect.vercel.app-00d4ff?style=for-the-badge&labelColor=0a0f1e" alt="Live App"/></a>
+  <a href="https://github.com/9059Rohith/Clip2Detect"><img src="https://img.shields.io/badge/GitHub-9059Rohith%2FClip2Detect-7c3aed?style=for-the-badge&logo=github&labelColor=0a0f1e" alt="GitHub"/></a>
+  <a href="https://github.com/9059Rohith/Clip2Detect/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-00ff88?style=for-the-badge&labelColor=0a0f1e" alt="MIT License"/></a>
+</p>
 
-The included **Fruit Catch** sample is an original generated video. Its ground truth comes from the generator's drawing coordinates. The live GPT result is a separate comparison and is not used to calculate the reported training metrics.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/YOLOv8-Ultralytics-FF6B35?style=flat-square&logo=pytorch&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OpenCV-4.8+-5C3EE8?style=flat-square&logo=opencv&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/GPT--5.6%20Luna-OpenAI-412991?style=flat-square&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Vercel-Deployed-000000?style=flat-square&logo=vercel&logoColor=white"/>
+  <img src="https://img.shields.io/badge/mAP%4050-99.0%25-00ff88?style=flat-square"/>
+</p>
 
-| Measured sample result | Value |
-| --- | ---: |
-| Source video | 8 seconds, 640 × 360, 4 FPS |
-| Frames / exact boxes | 32 / 96 |
-| Augmented images | 128 |
-| Train / validation images | 125 / 35 |
-| Model / epochs | YOLOv8n / 6 |
-| Validation mAP@50 | **99.0%** |
-| Validation mAP@50–95 | **87.9%** |
-| Precision / recall | **91.5% / 93.5%** |
+<p align="center">
+  <strong>
+    <a href="https://clip2detect.vercel.app/">🌐 Live Demo</a> ·
+    <a href="#-demo-video">🎬 Demo Video</a> ·
+    <a href="docs/poster/clip2detect-poster.png">🖼️ Poster</a> ·
+    <a href="#-quick-start">🚀 Quick Start</a> ·
+    <a href="#-architecture">🏗️ Architecture</a> ·
+    <a href="#-results">📊 Results</a> ·
+    <a href="#-api-reference">📖 API Reference</a>
+  </strong>
+</p>
 
-These figures come from [the measured evaluation JSON](site/public/sample/eval_results.json) and [trained weights](site/public/sample/best.pt). They describe this small controlled sample, not performance on arbitrary footage.
+---
 
-## Try it
+> **Clip2Detect** is an end-to-end ML pipeline that samples frames from a local video, labels every frame (via a JSON manifest **or** GPT-5.6 Luna vision), augments the dataset, trains a YOLOv8 object detector, and surfaces all results — frames, labels, live AI comparisons, and model metrics — in a polished React browser app, all deployed on Vercel.
 
-Requirements: Python 3.11+, [uv](https://docs.astral.sh/uv/), and enough memory for PyTorch. The browser app needs Node.js 20+.
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [🎬 Demo Video](#-demo-video)
+- [✨ Features](#-features)
+- [📊 Results & Benchmarks](#-results--benchmarks)
+- [🏗️ Architecture](#-architecture)
+- [🚀 Quick Start](#-quick-start)
+- [📖 CLI Reference](#-cli-reference)
+- [⚙️ Configuration & Options](#-configuration--options)
+- [🗂️ Project Structure](#-project-structure)
+- [🔬 How It Works](#-how-it-works)
+- [🌐 Live Application](#-live-application)
+- [🧪 Testing](#-testing)
+- [🔧 Tech Stack](#-tech-stack)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
+
+---
+
+## 🎬 Demo Video
+
+<div align="center">
+
+[![Clip2Detect Demo Video](https://img.shields.io/badge/▶%20Watch%20Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://clip2detect.vercel.app/)
+
+> **📹 Full narrated walkthrough** — See the complete pipeline in action: video sampling → GPT-5.6 labeling → YOLOv8 training → live browser inspection with real-time AI comparison.
+
+*A browser-recorded, narrated, and subtitled demo is generated by [`docs/demo/make_demo.py`](docs/demo/make_demo.py) using Playwright + Edge neural TTS + FFmpeg. To regenerate the recording locally, configure the live AI endpoint (see [Live Application](#-live-application)) and run:*
 
 ```bash
+uv run --extra demo python docs/demo/make_demo.py
+```
+
+</div>
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🎮 **Video Frame Sampling** | Extracts frames from any local MP4 at a configurable FPS using OpenCV |
+| 🏷️ **Dual Labeling Modes** | Use a precise **JSON manifest** or **GPT-5.6 Luna vision** via OpenAI Responses API |
+| 🔄 **Smart Augmentation** | Generates horizontal flip, brightness, contrast & noise variants with correct box transforms |
+| 🧠 **Train/Val Split Isolation** | Keeps all variants of a source frame in the **same** partition — preventing data leakage |
+| 🚀 **YOLOv8 Training** | Trains Ultralytics YOLOv8n and evaluates saved `best.pt` weights automatically |
+| 📊 **Full Evaluation** | Produces mAP@50, mAP@50–95, per-class AP, precision, and recall as a JSON report |
+| 🌐 **Browser Viewer** | React + TypeScript + Vite SPA for browsing frames, labels, AI comparison, metrics & downloads |
+| 🤖 **Live AI Comparison** | Vercel serverless function calls GPT-5.6 Luna per-frame; dashed overlays compare with ground truth |
+| 🔒 **Secure by Design** | API key never sent to the browser; all secrets stay in Vercel Production environment variables |
+
+---
+
+## 📊 Results & Benchmarks
+
+The included **Fruit Catch** sample is an original generated gameplay video. Ground-truth boxes come from the generator's own drawing coordinates, guaranteeing pixel-perfect annotations.
+
+<div align="center">
+
+| Metric | Value |
+|---|---:|
+| 📹 Source video | 8 seconds · 640 × 360 · 4 FPS |
+| 🖼️ Sampled frames / exact boxes | 32 / 96 |
+| 🔄 Augmented images | 128 |
+| 📂 Train / Validation images | 125 / 35 |
+| 🤖 Model / Epochs | YOLOv8n / 6 |
+| ✅ **Validation mAP@50** | **99.0%** |
+| ✅ **Validation mAP@50–95** | **87.9%** |
+| 📈 **Precision / Recall** | **91.5% / 93.5%** |
+
+</div>
+
+> **Note:** These figures describe this controlled sample. On arbitrary video footage with noisier annotations the numbers will vary. The live GPT comparison runs independently and is **not** used to calculate the reported training metrics.
+
+Raw data lives in:
+- [`site/public/sample/eval_results.json`](site/public/sample/eval_results.json) — full evaluation JSON
+- [`site/public/sample/best.pt`](site/public/sample/best.pt) — trained YOLO weights
+
+---
+
+## 🏗️ Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                         CLIP2DETECT PIPELINE                         │
+└──────────────────────────────────────────────────────────────────────┘
+
+   Local Video (MP4)
+        │
+        ▼
+┌──────────────┐     OpenCV          ┌─────────────────┐
+│  Frame        │ ──────────────────► │  Sampled Frames │
+│  Sampling     │  @ configurable FPS │  (JPEG, 95 qual)│
+└──────────────┘                     └────────┬────────┘
+                                              │
+                              ┌───────────────┼───────────────┐
+                              │               │               │
+                    ┌─────────▼──────┐        │      ┌────────▼───────┐
+                    │  JSON Manifest │        │      │  GPT-5.6 Luna  │
+                    │  (exact boxes) │        │      │  Vision API    │
+                    └─────────┬──────┘        │      └────────┬───────┘
+                              └───────────────┼───────────────┘
+                                              ▼
+                                    ┌──────────────────┐
+                                    │   YOLO Labels    │
+                                    │  (.txt per frame)│
+                                    └────────┬─────────┘
+                                             │
+                                             ▼
+                                    ┌──────────────────┐
+                                    │   Augmentation   │
+                                    │  Flip · Bright · │
+                                    │  Contrast · Noise│
+                                    └────────┬─────────┘
+                                             │
+                                             ▼
+                              ┌──────────────────────────┐
+                              │  Train/Val Dataset Split  │
+                              │  (group-isolated, 80/20)  │
+                              └─────────────┬────────────┘
+                                            │
+                                            ▼
+                                   ┌─────────────────┐
+                                   │  YOLOv8n Train  │
+                                   │  (Ultralytics)  │
+                                   └────────┬────────┘
+                                            │
+                                            ▼
+                                   ┌─────────────────┐
+                                   │  Evaluate       │
+                                   │  best.pt weights│
+                                   └────────┬────────┘
+                                            │
+                        ┌───────────────────┼───────────────────┐
+                        ▼                   ▼                   ▼
+               ┌──────────────┐    ┌───────────────┐   ┌──────────────┐
+               │  eval_results│    │   best.pt     │   │  React Viewer│
+               │  .json       │    │   weights     │   │  (Vercel)    │
+               └──────────────┘    └───────────────┘   └──────────────┘
+```
+
+### Component Overview
+
+| Component | Location | Role |
+|---|---|---|
+| `pipeline.py` | `clip2detect/pipeline.py` | Core ML pipeline: collect → label → augment → dataset → train → evaluate |
+| `cli.py` | `clip2detect/cli.py` | `argparse` CLI entry point |
+| `run_demo.py` | `examples/fruit-catch/` | End-to-end demo runner (generates video + ground truth + trains) |
+| `publish_site_data.py` | `examples/fruit-catch/` | Exports run artifacts into the React site's public folder |
+| React SPA | `site/` | Vite + TypeScript browser viewer with Vercel serverless API |
+| Tests | `tests/` | Unit tests (pipeline) + smoke tests (browser/site) |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+| Tool | Version | Purpose |
+|---|---|---|
+| [Python](https://python.org) | 3.11+ | Pipeline runtime |
+| [uv](https://docs.astral.sh/uv/) | Latest | Ultra-fast Python package manager |
+| [Node.js](https://nodejs.org) | 20+ | React viewer dev server |
+| PyTorch-compatible hardware | CPU/GPU | Model training (GPU optional but faster) |
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/9059Rohith/Clip2Detect.git
+cd Clip2Detect
 uv sync --locked
+```
+
+### 2. Run the Included Fruit Catch Demo
+
+This single command generates its own video, creates pixel-perfect ground-truth labels, samples frames, augments, trains YOLOv8, and evaluates:
+
+```bash
 uv run python examples/fruit-catch/run_demo.py
+```
+
+All outputs land in `runs/fruit-catch-demo/`.
+
+### 3. Export Artifacts to the Browser Site
+
+```bash
 uv run python examples/fruit-catch/publish_site_data.py
+```
+
+### 4. Launch the React Viewer
+
+```bash
 cd site
 npm ci
 npm run dev
 ```
 
-The full example generates its own video and labels, then extracts frames, augments, trains, evaluates, and exports the result. Its outputs are in `runs/fruit-catch-demo/`. Training runs locally in Python; the website displays the exported artifacts.
+Open [http://localhost:5173](http://localhost:5173) — browse frames, labels, evaluation metrics, and live AI comparisons.
 
-For your own local video, supply boxes in the same JSON shape as [`ground_truth.json`](examples/fruit-catch/ground_truth.json):
+---
 
-```bash
-uv run python -m clip2detect path/to/video.mp4 --classes fruit,bomb --manifest path/to/boxes.json --output runs/my-video
+## 📖 CLI Reference
+
+### Basic Usage
+
+```
+uv run python -m clip2detect <video> --classes <cls1,cls2,...> [OPTIONS]
 ```
 
-Or use GPT-5.6 vision to label the sampled frames:
+### Labeling from a JSON Manifest (Exact Boxes)
 
 ```bash
-uv run python -m clip2detect path/to/video.mp4 --classes fruit,bomb --openai --output runs/my-video
+uv run python -m clip2detect path/to/video.mp4 \
+  --classes fruit,bomb \
+  --manifest path/to/boxes.json \
+  --output runs/my-run
 ```
 
-For the second command, set `OPENAI_API_KEY` in your shell or a local untracked environment file. Inspect model-generated boxes before relying on them for training. The [example environment file](site/.env.example) contains no credentials.
+### Labeling with GPT-5.6 Luna Vision (AI Auto-Label)
 
-## Live application and media
+```bash
+export OPENAI_API_KEY=sk-...
 
-| Deliverable | Link |
-| --- | --- |
-| Live viewer | [clip2detect.vercel.app](https://clip2detect.vercel.app/) |
-| Narrated, subtitled video | Recording pending live AI configuration; [recording script](docs/demo/make_demo.py) |
-| Poster | [Full resolution PNG](docs/poster/clip2detect-poster.png) |
-| Screenshots | [Desktop](docs/screenshots/desktop-overview.png) · [Evaluation](docs/screenshots/evaluation.png) · [Mobile](docs/screenshots/mobile-overview.png) |
-| Model and data | [Weights](https://clip2detect.vercel.app/sample/best.pt) · [Evaluation JSON](https://clip2detect.vercel.app/sample/eval_results.json) |
+uv run python -m clip2detect path/to/video.mp4 \
+  --classes fruit,bomb \
+  --openai \
+  --output runs/my-run
+```
 
-The site's **Analyze this frame** action calls a Vercel Function. The API key stays on the server; the browser sends only a sample frame number. The function requests structured boxes from GPT-5.6 Luna and the viewer draws them with dashed outlines beside the exact sample labels. Set `OPENAI_API_KEY` in the `clip2detect` Vercel project's Production environment and redeploy to enable it.
+> ⚠️ **Always inspect AI-generated boxes** before using them as training data. The vision model may produce imprecise or noisy annotations on complex footage.
 
-## Tests
+### Overwrite an Existing Run
+
+```bash
+uv run python -m clip2detect path/to/video.mp4 \
+  --classes fruit,bomb \
+  --manifest boxes.json \
+  --output runs/my-run \
+  --overwrite
+```
+
+---
+
+## ⚙️ Configuration & Options
+
+| Argument | Type | Default | Description |
+|---|---|---|---|
+| `video` | `Path` | *(required)* | Local video file path |
+| `--classes` | `str` | *(required)* | Comma-separated class names, e.g. `fruit,bomb` |
+| `--manifest` | `Path` | `None` | JSON annotation manifest (mutually exclusive with `--openai`) |
+| `--openai` | flag | `False` | Use GPT-5.6 Luna vision for auto-labeling |
+| `--output` | `Path` | `runs/custom` | Directory to write all pipeline outputs |
+| `--fps` | `float` | `4` | Frames per second to sample from the video |
+| `--epochs` | `int` | `6` | Number of YOLOv8 training epochs |
+| `--image-size` | `int` | `320` | Training image size (pixels) |
+| `--batch` | `int` | `8` | Batch size for training and validation |
+| `--model` | `str` | `yolov8n.pt` | Ultralytics model checkpoint to start from |
+| `--overwrite` | flag | `False` | Replace existing outputs in the selected directory |
+
+### Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `OPENAI_API_KEY` | When using `--openai` | Your OpenAI API key for GPT-5.6 Luna vision labeling |
+| `OPENAI_LABEL_MODEL` | Optional | Override the vision model (default: `gpt-5.6-luna`) |
+| `CLIP2DETECT_SITE_URL` | Optional (smoke tests) | Override the base URL for browser smoke tests |
+
+---
+
+## 🗂️ Project Structure
+
+```
+Clip2Detect/
+├── clip2detect/               # Core Python package
+│   ├── __init__.py
+│   ├── __main__.py            # python -m clip2detect entry point
+│   ├── cli.py                 # argparse CLI interface
+│   └── pipeline.py            # Full ML pipeline (collect→label→augment→train→eval)
+│
+├── examples/
+│   └── fruit-catch/           # Built-in end-to-end sample
+│       ├── run_demo.py        # Generates video + runs full pipeline
+│       ├── publish_site_data.py # Exports artifacts to site/public/sample/
+│       ├── create_fixture.py  # Procedural video + ground-truth generator
+│       ├── ground_truth.json  # Exact pixel-level bounding boxes (96 objects)
+│       ├── input.mp4          # Generated gameplay video (8 sec, 640×360)
+│       └── config.json        # Demo configuration
+│
+├── docs/
+│   ├── poster/
+│   │   └── clip2detect-poster.png  # Project poster (full resolution)
+│   ├── screenshots/
+│   │   ├── desktop-overview.png
+│   │   ├── evaluation.png
+│   │   ├── live-ai.png
+│   │   └── mobile-overview.png
+│   └── demo/
+│       └── make_demo.py       # Playwright + TTS demo recording script
+│
+├── site/                      # React + TypeScript viewer (Vite)
+│   ├── src/                   # Component source
+│   ├── api/                   # Vercel serverless functions (GPT live compare)
+│   ├── public/sample/         # Exported pipeline artifacts served to browser
+│   └── .env.example           # Example env file (no credentials)
+│
+├── tests/
+│   ├── test_pipeline.py       # Unit tests: collect, label, augment, dataset, train
+│   └── site_smoke.py          # Browser smoke tests via Playwright
+│
+├── runs/                      # Pipeline outputs (gitignored)
+├── pyproject.toml             # Project metadata + dependencies (uv / hatchling)
+├── uv.lock                    # Locked dependency tree
+├── yolov8n.pt                 # Base YOLOv8n weights
+└── LICENSE                    # MIT
+```
+
+---
+
+## 🔬 How It Works
+
+### Stage 1 — Frame Collection (`collect`)
+
+OpenCV opens the source video and samples one frame every `1/fps` seconds of elapsed video time. Each frame is written as a high-quality JPEG (95%) to `{output}/frames/`. At least two frames are required.
+
+### Stage 2 — Annotation (`label`)
+
+**Mode A — JSON Manifest:** A manifest file maps each frame number to a list of `{"class": "...", "xyxy": [x1,y1,x2,y2]}` objects. Coordinates are validated against image dimensions and converted to YOLO's normalized `cx cy w h` format.
+
+**Mode B — GPT-5.6 Luna Vision:** Each frame is base64-encoded and sent to the OpenAI Responses API with a structured JSON-schema output format. The model returns tight bounding boxes for the requested class names, which are then validated and converted. Results are written as `.txt` label files alongside each frame.
+
+### Stage 3 — Augmentation (`augment`)
+
+For every source frame, four variants are generated:
+- **Flip** — horizontal mirror; X-coordinates are reflected (`cx → 1 - cx`)
+- **Brightness** — `±20%` random brightness adjustment (Pillow `ImageEnhance`)
+- **Contrast** — `±20%` random contrast adjustment
+- **Noise** — Gaussian pixel noise (σ = 10, clipped to `[0, 255]`)
+
+Labels are copied as-is for photometric augmentations; flip transforms bounding boxes correctly.
+
+### Stage 4 — Dataset Construction (`make_dataset`)
+
+All variants of the same source frame are grouped together. Groups are shuffled with a fixed seed and split `80/20` into train/validation. This **group-isolated split** guarantees that a source frame and all its augmented copies always land in the same partition, preventing data leakage. A `dataset.yaml` is written for Ultralytics.
+
+### Stage 5 — Training & Evaluation (`train_and_evaluate`)
+
+Ultralytics `YOLO` trains with the supplied config. The best checkpoint (`best.pt`) is copied to `{output}/weights/`. A separate validation run on the held-out set produces:
+- mAP@50 and mAP@50–95
+- Per-class Average Precision
+- Macro precision and recall
+
+Results are saved as `eval_results.json` and printed to stdout.
+
+---
+
+## 🌐 Live Application
+
+| Resource | Link |
+|---|---|
+| 🌐 Live Viewer | [clip2detect.vercel.app](https://clip2detect.vercel.app/) |
+| 🎬 Demo Video | [Watch the narrated walkthrough](https://clip2detect.vercel.app/) |
+| 🖼️ Poster (full resolution PNG) | [docs/poster/clip2detect-poster.png](docs/poster/clip2detect-poster.png) |
+| 🖥️ Screenshot — Desktop Overview | [docs/screenshots/desktop-overview.png](docs/screenshots/desktop-overview.png) |
+| 📊 Screenshot — Evaluation Panel | [docs/screenshots/evaluation.png](docs/screenshots/evaluation.png) |
+| 🤖 Screenshot — Live AI Comparison | [docs/screenshots/live-ai.png](docs/screenshots/live-ai.png) |
+| 📱 Screenshot — Mobile View | [docs/screenshots/mobile-overview.png](docs/screenshots/mobile-overview.png) |
+| ⚖️ Trained Weights (best.pt) | [clip2detect.vercel.app/sample/best.pt](https://clip2detect.vercel.app/sample/best.pt) |
+| 📈 Evaluation JSON | [clip2detect.vercel.app/sample/eval_results.json](https://clip2detect.vercel.app/sample/eval_results.json) |
+
+### Live AI Feature Setup
+
+The **"Analyze this frame"** button in the viewer triggers a Vercel serverless function that calls GPT-5.6 Luna with only a frame number — **the API key never leaves the server**. To enable it on your own deployment:
+
+1. Go to your `clip2detect` Vercel project → **Settings** → **Environment Variables**
+2. Add `OPENAI_API_KEY` to the **Production** environment
+3. Redeploy the project
+
+Dashed box overlays (AI result) are drawn beside solid overlays (ground truth) for direct visual comparison.
+
+---
+
+## 🧪 Testing
+
+### Python Unit Tests
 
 ```bash
 uv run python -m unittest discover -s tests -p "test_*.py" -v
-cd site && npm ci && npm run test:api && npm run build
 ```
 
-For a browser check, run the app or use the live URL and then run `uv run --extra demo python tests/site_smoke.py`. Set `CLIP2DETECT_SITE_URL` to choose a different base URL. The tests check box encoding, source-group split isolation, API response handling, desktop and mobile controls, and artifact downloads.
+Covers: box encoding, source-group split isolation, API response handling, augmentation correctness, and train/val set construction.
 
-## Stack and ownership
+### Site Build & API Tests
 
-Clip2Detect is an individual project by **9059Rohith**, built with Codex assistance. Its application code, sample footage, and artwork are maintained here. It uses third-party libraries and a pretrained YOLOv8n model; those dependencies retain their own licenses and authorship.
+```bash
+cd site
+npm ci
+npm run test:api
+npm run build
+```
 
-Python, OpenCV, Pillow, NumPy, PyTorch, and Ultralytics power the data pipeline. React, TypeScript, Vite, and Vercel power the interactive viewer. The live comparison uses the OpenAI Responses API with structured output. Playwright, Edge neural narration, and FFmpeg create the real browser demo with audio and subtitles.
+### Browser Smoke Tests (Playwright)
 
-Licensed under [MIT](LICENSE) for the code in this repository.
+Run against the live deployment or a local dev server:
+
+```bash
+# Against live app (default)
+uv run --extra demo python tests/site_smoke.py
+
+# Against local dev server
+CLIP2DETECT_SITE_URL=http://localhost:5173 uv run --extra demo python tests/site_smoke.py
+```
+
+Checks: desktop and mobile controls, artifact downloads, frame navigation, and live AI comparison panel.
+
+---
+
+## 🔧 Tech Stack
+
+### Python Pipeline
+
+| Library | Version | Role |
+|---|---|---|
+| [Python](https://python.org) | 3.11+ | Core runtime |
+| [OpenCV](https://opencv.org/) | 4.8+ | Video decoding and frame extraction |
+| [Pillow](https://pillow.readthedocs.io/) | 10.0+ | Image augmentation (brightness, contrast, noise) |
+| [NumPy](https://numpy.org/) | 1.24+ | Pixel-level array operations |
+| [PyYAML](https://pyyaml.org/) | 6.0+ | YOLO dataset YAML generation |
+| [Ultralytics](https://ultralytics.com/) | 8.0+ | YOLOv8 training and evaluation |
+| [OpenAI Responses API](https://platform.openai.com/) | — | GPT-5.6 Luna structured vision output |
+
+### Demo & Recording (optional)
+
+| Library | Role |
+|---|---|
+| [Playwright](https://playwright.dev/python/) | Browser automation for demo recording |
+| [edge-tts](https://github.com/rany2/edge-tts) | Neural narration via Microsoft Edge TTS |
+| [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg) | FFmpeg integration for final MP4 encoding |
+| [mutagen](https://mutagen.readthedocs.io/) | Audio duration reading |
+
+### Frontend
+
+| Tool | Role |
+|---|---|
+| [React](https://react.dev/) + [TypeScript](https://typescriptlang.org/) | Component-based browser viewer |
+| [Vite](https://vitejs.dev/) | Lightning-fast dev server and build tool |
+| [Vercel](https://vercel.com/) | Static site hosting + serverless function runtime |
+
+---
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><b>Desktop Overview</b></td>
+    <td align="center"><b>Evaluation Panel</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/desktop-overview.png" alt="Desktop Overview"/></td>
+    <td><img src="docs/screenshots/evaluation.png" alt="Evaluation Panel"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Live AI Comparison</b></td>
+    <td align="center"><b>Mobile View</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/live-ai.png" alt="Live AI Comparison"/></td>
+    <td><img src="docs/screenshots/mobile-overview.png" alt="Mobile View"/></td>
+  </tr>
+</table>
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome! Please:
+
+1. **Fork** the repository
+2. **Create** your feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** your changes: `git commit -m 'feat: add amazing feature'`
+4. **Push** to the branch: `git push origin feature/amazing-feature`
+5. **Open a Pull Request** against `main`
+
+### Development Setup
+
+```bash
+# Install all dependencies including demo extras
+uv sync --locked --extra demo
+
+# Install Playwright browsers (for smoke tests and demo recording)
+uv run playwright install chromium
+```
+
+### Code Style
+
+- Python: follow the existing style (type annotations, docstrings, no external formatters enforced)
+- Keep each pipeline stage (`collect`, `label`, `augment`, `make_dataset`, `train_and_evaluate`) in `pipeline.py` independently testable
+- New CLI flags should have a corresponding unit test in `tests/test_pipeline.py`
+
+---
+
+## 📜 License
+
+Clip2Detect's application code, sample footage, and artwork are licensed under the **MIT License** — see [`LICENSE`](LICENSE) for the full text.
+
+Third-party dependencies (PyTorch, Ultralytics, OpenCV, React, etc.) and the pre-trained YOLOv8n weights retain their own respective licenses and authorship.
+
+---
+
+## 👤 Author
+
+**9059Rohith** — built with Codex assistance.
+
+- GitHub: [@9059Rohith](https://github.com/9059Rohith)
+- Live Project: [clip2detect.vercel.app](https://clip2detect.vercel.app/)
+
+---
+
+<div align="center">
+
+**⭐ If Clip2Detect helped you, please consider starring the repository!**
+
+[![Star on GitHub](https://img.shields.io/github/stars/9059Rohith/Clip2Detect?style=social)](https://github.com/9059Rohith/Clip2Detect)
+
+*Made with ❤️ and a lot of bounding boxes*
+
+</div>
